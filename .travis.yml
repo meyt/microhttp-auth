@@ -18,4 +18,4 @@ script:
   py.test -vv --cov-report term-missing:skip-covered --cov=microhttp_auth
 
 after_success:
-  if [[ $TRAVIS_PYTHON_VERSION == '3.6' ]]; then travis_retry coveralls; fi
+  coveralls
