@@ -130,7 +130,7 @@ class StatefulAuthenticator(Authenticator):
 
     def unregister_session(self, session_id=None):
         session_id = session_id or context.identity.session_id
-        member_id = self.redis.hget(self.sessions_key, session_id)
+        member_id = self.redis.hget(self.sessions_key, session_id).decode()
         self.redis.srem(self.get_member_sessions_key(member_id), session_id)
         self.redis.hdel(self.sessions_key, session_id)
         self.redis.delete(self.get_session_info_key(session_id))

@@ -280,3 +280,36 @@ def test_manage_sessions(app):
     app.get('/get_sessions', headers={
         'Authorization': access_token
     }, status=401)
+
+
+def test_authenticator(app):
+    _ = app
+    from nanohttp.contexts import Context
+    with Context({}):
+        authenticator = StatefulAuthenticator()
+        member_id = 500
+
+        for session_id in ('bla_bla1', 'bla_bla2', 'bla_bla3'):
+            authenticator.register_session(
+                member_id=member_id,
+                session_id=session_id
+            )
+
+            # Get session info
+            info = authenticator.get_session_info(
+                session_id=session_id
+            )
+            assert 'remoteAddress' in info
+
+        last_sessions = sessions = authenticator.get_member_sessions(member_id)
+        assert len(sessions) >= 0
+
+        authenticator.unregister_session(session_id)
+
+        sessions = authenticator.get_member_sessions(member_id)
+        assert len(sessions) == len(last_sessions) - 1
+
+        authenticator.invalidate_member(member_id)
+
+        sessions = authenticator.get_member_sessions(member_id)
+        assert len(sessions) == 0
